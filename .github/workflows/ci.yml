@@ -1,0 +1,27 @@
+name: Checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 2 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - uses: pnpm/action-setup@v4
+      - uses: go-task/setup-task@v2
+        with:
+          version: 3.53.1
+      - if: github.event_name != 'schedule'
+        run: task ci
+      - if: github.event_name == 'schedule'
+        run: task nightly

@@ -1,0 +1,92 @@
+version: "3"
+
+tasks:
+    lock:
+        cmds:
+            - pnpm install --lockfile-only --ignore-scripts
+
+    deps:
+        run: once
+        cmds:
+            - pnpm install --frozen-lockfile --ignore-scripts
+
+    build:
+        run: once
+        deps: [deps]
+        cmds:
+            - node -e 'require("node:fs").rmSync("dist", {recursive:true,force:true})'
+            - pnpm run build
+
+    pack:
+        run: once
+        deps: [build]
+        cmds:
+            - mkdir -p target/package
+            - pnpm pack --pack-destination target/package
+
+    test:
+        deps: [deps]
+        cmds:
+            - task: test:local
+
+    test:local:
+        run: once
+        cmds:
+            - pnpm test
+
+    lint:local:
+        run: once
+        cmds:
+            - pnpm run lint
+
+    fmt:
+        deps: [deps]
+        cmds:
+            - pnpm run fmt
+
+    pre:
+        desc: Local checks using installed dependencies.
+        cmds:
+            - task: pre:run
+
+    pre:run:
+        cmds:
+            - task: lint:local
+            - task: test:local
+
+    integration:local:
+        run: once
+        cmds:
+            - pnpm run test:integration
+
+    expanded:local:
+        cmds:
+            - EINX_TEST_CASES=4096 node --test --test-name-pattern='generated malformed' target/tests/src/expression.test.js
+            - EINX_TEST_CASES=512 EINX_LIFETIME_CASES=1024 node --test target/tests/tests/integration/properties.test.js
+
+    consumer:
+        deps: [pack]
+        cmds:
+            - pnpm run test:package
+
+    ci:
+        desc: Full lint, tests and npm/pnpm package consumers.
+        cmds:
+            - task: ci:run
+
+    ci:run:
+        cmds:
+            - task: deps
+            - task: pre:run
+            - task: integration:local
+            - task: consumer
+
+    nightly:
+        desc: CI plus expanded properties and lifetime checks.
+        cmds:
+            - task: nightly:run
+
+    nightly:run:
+        cmds:
+            - task: ci:run
+            - task: expanded:local

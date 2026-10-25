@@ -1,0 +1,9 @@
+repos:
+  - repo: local
+    hooks:
+      - id: pre
+        name: einx-js local checks
+        entry: task pre
+        language: system
+        pass_filenames: false
+        always_run: true

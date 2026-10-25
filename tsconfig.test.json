@@ -1,0 +1,16 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "rootDir": ".",
+        "outDir": "target/tests",
+        "declaration": false,
+        "allowImportingTsExtensions": true,
+        "rewriteRelativeImportExtensions": true,
+        "types": ["node"],
+        "paths": {
+            "einx-js": ["./src/index.ts"]
+        }
+    },
+    "include": ["src/**/*.ts", "tests/**/*.ts"],
+    "exclude": []
+}

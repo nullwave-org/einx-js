@@ -1,0 +1,43 @@
+{
+    "name": "einx-js",
+    "version": "0.1.0",
+    "description": "Named-axis tensor operations for jax-js",
+    "type": "module",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/nullwave-org/einx-js.git"
+    },
+    "engines": {
+        "node": ">=24"
+    },
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js"
+        }
+    },
+    "types": "./dist/index.d.ts",
+    "files": [
+        "dist",
+        "ARCHITECTURE.md"
+    ],
+    "scripts": {
+        "build": "tsc -p tsconfig.json",
+        "build:tests": "tsc -p tsconfig.test.json",
+        "test": "pnpm run build:tests && node --test target/tests/src/*.test.js",
+        "lint": "biome check --error-on-warnings .",
+        "fmt": "biome check --write --unsafe .",
+        "test:package": "node --test tests/system/package.test.ts",
+        "test:integration": "node --test target/tests/tests/integration/*.test.js"
+    },
+    "peerDependencies": {
+        "@jax-js/jax": "^0.1.27"
+    },
+    "devDependencies": {
+        "@jax-js/jax": "0.1.27",
+        "@biomejs/biome": "2.6.2",
+        "@types/node": "24.19.2",
+        "typescript": "7.0.2"
+    },
+    "packageManager": "pnpm@11.21.0"
+}
